@@ -94,6 +94,16 @@ in the foreground service so the OS won't kill the animation mid-play.
 
 ---
 
+## Download the APK
+
+Every push is built in CI and published to a rolling release with a **permanent
+download link**:
+
+**➡️ [Download `jarvis-os.apk`](https://github.com/Mitchel-Sonnie-Crist/Edith-2/releases/download/latest-build/jarvis-os.apk)**
+
+Install it on your phone (allow "install from unknown sources" when prompted),
+then follow the on-device setup below.
+
 ## Build & run
 
 Requires JDK 17 and the Android SDK (compileSdk 34).

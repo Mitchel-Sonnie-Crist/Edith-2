@@ -1,13 +1,15 @@
 name: Build APK
 
-# Build an installable debug APK in the cloud so it can be sideloaded onto a phone.
+# Build an installable debug APK in the cloud so it can be sideloaded onto a phone,
+# and publish it to a rolling GitHub Release for a permanent download link.
 on:
   push:
     branches: [ "**" ]
   workflow_dispatch:   # lets you trigger a build manually from the Actions tab
 
+# contents: write is needed to create/update the Release below.
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   build:
@@ -31,9 +33,31 @@ jobs:
       - name: Build debug APK
         run: ./gradlew :app:assembleDebug --stacktrace
 
+      # Friendly, stable filename for the download button.
+      - name: Rename APK
+        run: cp app/build/outputs/apk/debug/app-debug.apk jarvis-os.apk
+
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
           name: jarvis-debug-apk
-          path: app/build/outputs/apk/debug/app-debug.apk
+          path: jarvis-os.apk
           if-no-files-found: error
+
+      # Publish/refresh a single "latest-build" release so the download URL never
+      # changes:
+      #   https://github.com/Mitchel-Sonnie-Crist/Edith-2/releases/download/latest-build/jarvis-os.apk
+      - name: Publish to GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: latest-build
+          name: "J.A.R.V.I.S. OS — latest build"
+          body: |
+            Automatically built debug APK of the J.A.R.V.I.S. boot HUD.
+
+            **Download:** the `jarvis-os.apk` asset below, then install it on your phone
+            (allow "install from unknown sources" when prompted).
+
+            Built from commit ${{ github.sha }}.
+          files: jarvis-os.apk
+          make_latest: true
