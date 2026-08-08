@@ -18,6 +18,18 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    signingConfigs {
+        // A committed, stable debug key so every build (CI or local) is signed
+        // identically — installs update over each other instead of failing with
+        // "App not installed". Standard Android debug credentials (not secret).
+        getByName("debug") {
+            storeFile = rootProject.file("keystore/jarvis-debug.keystore")
+            storePassword = "android"
+            keyAlias = "androiddebugkey"
+            keyPassword = "android"
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = true
