@@ -38,6 +38,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
+import com.stark.jarvis.audio.JarvisVoice
 import com.stark.jarvis.audio.SoundManager
 import com.stark.jarvis.service.JarvisOverlayService
 import com.stark.jarvis.ui.hud.JarvisHud
@@ -109,10 +110,15 @@ private fun ControlPanel(
     var playOnUnlock by remember { mutableStateOf(prefs.playOnUnlock) }
     var previewing by remember { mutableStateOf(false) }
 
-    // Own a SoundManager for the in-app preview; release it with the composition.
+    // Own a SoundManager + J.A.R.V.I.S. voice for the in-app preview; release them
+    // with the composition.
     val soundManager = remember { SoundManager(context) }
+    val voice = remember { JarvisVoice(context) }
     DisposableEffect(Unit) {
-        onDispose { soundManager.release() }
+        onDispose {
+            soundManager.release()
+            voice.release()
+        }
     }
 
     Column(
@@ -209,6 +215,7 @@ private fun ControlPanel(
         JarvisHud(
             alignment = Alignment.Center,
             onSound = { cue -> soundManager.play(cue) },
+            onSpeakLine = { line -> voice.speak(line) },
             onFinished = { previewing = false },
         )
     }

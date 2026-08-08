@@ -19,8 +19,9 @@ never obstructed and stays fully swipeable while the animation plays.
 |---|---|
 | Cyan/electric-blue HUD, Arc Reactor, diagnostic rings, telemetry | `ui/hud/*` (Compose Canvas) |
 | 60/120 FPS smooth animation | Compose `Animatable` + `InfiniteTransition` (frame-driven) |
-| ~3–4s duration + crisp fade-out | `JarvisHud` master timeline (`durationMillis = 3600`) |
+| ~3–4s duration + crisp fade-out | `JarvisHud` master timeline (`durationMillis = 4000`) |
 | Low-latency audio | `audio/SoundManager` — SoundPool (SFX) + Media3/ExoPlayer (hum) |
+| Spoken J.A.R.V.I.S. voice | `audio/JarvisVoice` — built-in Text-to-Speech, UK English, no audio files needed |
 | Boot trigger | `boot/BootCompletedReceiver` → `service/JarvisOverlayService` |
 | Unlock trigger | dynamic `ACTION_USER_PRESENT` receiver in the service |
 | Niagara-safe layout | center-right anchor + `FLAG_NOT_TOUCHABLE` overlay |
@@ -126,12 +127,18 @@ Requires JDK 17 and the Android SDK (compileSdk 34).
 4. Tap **Run boot sequence now** for an in-app preview (no permission needed),
    or **Trigger as system overlay** to test the real overlay path.
 
-### Add sound effects
+### Voice & sound
 
-Drop your SFX into `app/src/main/res/raw/` — see
-[`docs/SOUND_ASSETS.md`](docs/SOUND_ASSETS.md) for the expected filenames. The
-app resolves them by name at runtime, so it compiles and runs silently until you
-add them.
+The app **speaks** the diagnostics out of the box using the device's built-in
+Text-to-Speech engine (`audio/JarvisVoice`) — a calm UK-English "AI butler"
+delivery ending in *"All systems online. Welcome back, sir."* No audio files are
+required; the voice is part of the APK. For the best result, install a British
+English voice under **Settings → Accessibility → Text-to-speech** on the phone.
+
+The short SFX layer (metallic chimes, power-up hum, UI beeps) is **optional and
+additive**: drop your files into `app/src/main/res/raw/` — see
+[`docs/SOUND_ASSETS.md`](docs/SOUND_ASSETS.md) for the expected filenames — and
+they play alongside the voice. Without them, the voice still works.
 
 ---
 

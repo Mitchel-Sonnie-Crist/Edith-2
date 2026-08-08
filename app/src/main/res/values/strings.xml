@@ -21,4 +21,12 @@
     <string name="telemetry_3">ROUTING ARC REACTOR POWER…</string>
     <string name="telemetry_4">SYNCING BIOMETRICS…</string>
     <string name="telemetry_5">SYSTEMS ONLINE</string>
+
+    <!-- Spoken (TTS) telemetry — phrased for the J.A.R.V.I.S. voice, kept separate
+         from the on-screen text so it reads "Jarvis", not "J-A-R-V-I-S". -->
+    <string name="telemetry_spoken_1">Initializing Jarvis operating system.</string>
+    <string name="telemetry_spoken_2">Calibrating core.</string>
+    <string name="telemetry_spoken_3">Routing arc reactor power.</string>
+    <string name="telemetry_spoken_4">Synchronizing biometrics.</string>
+    <string name="telemetry_spoken_5">All systems online. Welcome back, sir.</string>
 </resources>

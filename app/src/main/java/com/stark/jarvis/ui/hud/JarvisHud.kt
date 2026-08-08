@@ -44,13 +44,16 @@ import kotlin.math.floor
 fun JarvisHud(
     modifier: Modifier = Modifier,
     alignment: Alignment = Alignment.CenterEnd,
-    durationMillis: Int = 3600,
+    durationMillis: Int = 4000,
     lines: List<String> = defaultTelemetry(),
+    spokenLines: List<String> = defaultSpokenTelemetry(),
     onSound: (HudSound) -> Unit = {},
+    onSpeakLine: (String) -> Unit = {},
     onFinished: () -> Unit = {},
 ) {
     // Keep the latest callbacks without restarting the animation.
     val currentOnSound by rememberUpdatedState(onSound)
+    val currentOnSpeakLine by rememberUpdatedState(onSpeakLine)
     val currentOnFinished by rememberUpdatedState(onFinished)
 
     val master = remember { Animatable(0f) }
@@ -65,28 +68,28 @@ fun JarvisHud(
         currentOnFinished()
     }
 
-    // Emit discrete sound beats as the timeline crosses thresholds, without
-    // coupling side effects to recomposition.
-    LaunchedEffect(lines) {
+    // Emit discrete audio beats — a beep/chime plus the spoken telemetry line —
+    // as the timeline crosses each line's start, without coupling side effects to
+    // recomposition. Each line is spoken once, as it begins printing on screen.
+    LaunchedEffect(lines, spokenLines) {
         var ringChimed = false
-        var revealed = 0
-        var onlineFired = false
+        var lastLine = -1
         snapshotFlow { master.value }.collect { m ->
             val content = contentProgress(m)
-            if (!ringChimed && content > 0.02f) {
+            if (content <= 0f) return@collect
+            if (!ringChimed) {
                 ringChimed = true
                 currentOnSound(HudSound.RING_CHIME)
             }
-            val nowRevealed = floor(content * lines.size).toInt().coerceIn(0, lines.size)
-            while (revealed < nowRevealed) {
-                revealed++
-                val isLast = revealed == lines.size
-                if (isLast && !onlineFired) {
-                    onlineFired = true
-                    currentOnSound(HudSound.ONLINE)
-                } else if (!isLast) {
-                    currentOnSound(HudSound.TELEMETRY_BEEP)
+            // The line currently starting to type (0-based, clamped to the last).
+            val line = (content * lines.size).toInt().coerceIn(0, lines.size - 1)
+            if (line > lastLine) {
+                for (i in (lastLine + 1)..line) {
+                    currentOnSpeakLine(spokenLines.getOrElse(i) { lines[i] })
+                    if (i == lines.size - 1) currentOnSound(HudSound.ONLINE)
+                    else currentOnSound(HudSound.TELEMETRY_BEEP)
                 }
+                lastLine = line
             }
         }
     }
@@ -146,7 +149,7 @@ fun JarvisHud(
     }
 }
 
-/** Default Stark-diagnostic telemetry, sourced from string resources. */
+/** Default Stark-diagnostic telemetry (on-screen text), from string resources. */
 @Composable
 private fun defaultTelemetry(): List<String> = listOf(
     stringResource(R.string.telemetry_1),
@@ -154,6 +157,16 @@ private fun defaultTelemetry(): List<String> = listOf(
     stringResource(R.string.telemetry_3),
     stringResource(R.string.telemetry_4),
     stringResource(R.string.telemetry_5),
+)
+
+/** Spoken counterparts of the telemetry lines, phrased for the J.A.R.V.I.S. voice. */
+@Composable
+private fun defaultSpokenTelemetry(): List<String> = listOf(
+    stringResource(R.string.telemetry_spoken_1),
+    stringResource(R.string.telemetry_spoken_2),
+    stringResource(R.string.telemetry_spoken_3),
+    stringResource(R.string.telemetry_spoken_4),
+    stringResource(R.string.telemetry_spoken_5),
 )
 
 // ---- Timeline shape (fractions of the master 0..1) ----

@@ -18,6 +18,14 @@
     <!-- Post the (silent) foreground-service notification on Android 13+. -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
+    <!-- Android 11+ package visibility: lets the app discover the system
+         Text-to-Speech engine that provides the J.A.R.V.I.S. voice. -->
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.TTS_SERVICE" />
+        </intent>
+    </queries>
+
     <application
         android:name=".JarvisApplication"
         android:allowBackup="true"

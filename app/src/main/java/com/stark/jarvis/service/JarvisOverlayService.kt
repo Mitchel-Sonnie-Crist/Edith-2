@@ -7,12 +7,15 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.ServiceInfo
 import android.os.Build
+import android.os.Handler
 import android.os.IBinder
+import android.os.Looper
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LifecycleService
 import com.stark.jarvis.JarvisApplication
 import com.stark.jarvis.R
+import com.stark.jarvis.audio.JarvisVoice
 import com.stark.jarvis.audio.SoundManager
 import com.stark.jarvis.ui.hud.JarvisHud
 import com.stark.jarvis.ui.overlay.ComposeOverlay
@@ -37,9 +40,11 @@ class JarvisOverlayService : LifecycleService() {
 
     private lateinit var prefs: JarvisPreferences
     private var soundManager: SoundManager? = null
+    private var voice: JarvisVoice? = null
     private var overlay: ComposeOverlay? = null
     private var isPlaying = false
     private var monitoringUnlock = false
+    private val mainHandler = Handler(Looper.getMainLooper())
 
     /** Fires on each device unlock while we are resident. */
     private val userPresentReceiver = object : BroadcastReceiver() {
@@ -87,11 +92,13 @@ class JarvisOverlayService : LifecycleService() {
 
         isPlaying = true
         val sound = soundManager ?: SoundManager(this).also { soundManager = it }
+        val jarvisVoice = voice ?: JarvisVoice(this).also { voice = it }
 
         val hud = ComposeOverlay(this) {
             JarvisTheme {
                 JarvisHud(
                     onSound = { cue -> sound.play(cue) },
+                    onSpeakLine = { line -> jarvisVoice.speak(line) },
                     onFinished = { onSequenceFinished() },
                 )
             }
@@ -101,13 +108,19 @@ class JarvisOverlayService : LifecycleService() {
     }
 
     private fun onSequenceFinished() {
+        // The visuals are done — remove the overlay immediately.
         overlay?.remove()
         overlay = null
         isPlaying = false
-        finishOrIdle()
+
+        if (monitoringUnlock) return // stay resident; the voice finishes naturally
+
+        // The final spoken line ("…welcome back, sir.") outlasts the animation, so
+        // hold the (silent) service open briefly before teardown to let it finish.
+        mainHandler.postDelayed({ stopEverything() }, VOICE_TAIL_MS)
     }
 
-    /** Stop the service if we have nothing left to monitor; otherwise idle. */
+    /** Stop immediately when there is nothing to play (e.g. missing permission). */
     private fun finishOrIdle() {
         if (!monitoringUnlock) {
             stopEverything()
@@ -115,6 +128,7 @@ class JarvisOverlayService : LifecycleService() {
     }
 
     private fun stopEverything() {
+        mainHandler.removeCallbacksAndMessages(null)
         overlay?.remove()
         overlay = null
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -155,6 +169,7 @@ class JarvisOverlayService : LifecycleService() {
     }
 
     override fun onDestroy() {
+        mainHandler.removeCallbacksAndMessages(null)
         if (monitoringUnlock) {
             runCatching { unregisterReceiver(userPresentReceiver) }
             monitoringUnlock = false
@@ -163,12 +178,17 @@ class JarvisOverlayService : LifecycleService() {
         overlay = null
         soundManager?.release()
         soundManager = null
+        voice?.release()
+        voice = null
         super.onDestroy()
     }
 
     companion object {
         private const val TAG = "JarvisOverlayService"
         private const val NOTIFICATION_ID = 0xA5C
+
+        // Grace period after the animation so the closing spoken line can finish.
+        private const val VOICE_TAIL_MS = 3500L
 
         const val ACTION_PLAY = "com.stark.jarvis.action.PLAY"
         const val ACTION_STOP = "com.stark.jarvis.action.STOP"
