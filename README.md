@@ -71,7 +71,7 @@ Edith-2/
 │       └── res/
 │           ├── drawable/ic_arc_reactor_foreground.xml
 │           ├── mipmap-anydpi-v26/            # adaptive launcher icon
-│           ├── raw/README.md                 # where to drop sound assets
+│           ├── raw/                           # drop sound assets here (see docs/SOUND_ASSETS.md)
 │           └── values/                       # strings, colors, themes
 ```
 
@@ -119,9 +119,9 @@ Requires JDK 17 and the Android SDK (compileSdk 34).
 ### Add sound effects
 
 Drop your SFX into `app/src/main/res/raw/` — see
-[`res/raw/README.md`](app/src/main/res/raw/README.md) for the expected
-filenames. The app resolves them by name at runtime, so it compiles and runs
-silently until you add them.
+[`docs/SOUND_ASSETS.md`](docs/SOUND_ASSETS.md) for the expected filenames. The
+app resolves them by name at runtime, so it compiles and runs silently until you
+add them.
 
 ---
 
