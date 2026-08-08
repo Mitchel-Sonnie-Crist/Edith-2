@@ -18,6 +18,9 @@
     <!-- Post the (silent) foreground-service notification on Android 13+. -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
+    <!-- As a launcher, list every installed app on the home screen. -->
+    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" />
+
     <!-- Android 11+ package visibility: lets the app discover the system
          Text-to-Speech engine that provides the J.A.R.V.I.S. voice. -->
     <queries>
@@ -46,6 +49,23 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- The J.A.R.V.I.S. launcher / Home screen. Set this app as the Home app
+             (Settings → Default apps → Home) and the whole home screen becomes the
+             persistent HUD. -->
+        <activity
+            android:name=".ui.home.HomeActivity"
+            android:exported="true"
+            android:launchMode="singleTask"
+            android:stateNotNeeded="true"
+            android:configChanges="orientation|screenSize|keyboardHidden|screenLayout|density"
+            android:theme="@style/Theme.Jarvis">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.HOME" />
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
 

@@ -1,9 +1,11 @@
 package com.stark.jarvis
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
@@ -203,6 +205,21 @@ private fun ControlPanel(
             modifier = Modifier.fillMaxWidth(),
         ) {
             Text("Trigger as system overlay")
+        }
+
+        Spacer(Modifier.height(6.dp))
+
+        // Make J.A.R.V.I.S. the phone's home screen (launcher).
+        Button(
+            onClick = {
+                val intent = Intent(Settings.ACTION_HOME_SETTINGS)
+                runCatching { context.startActivity(intent) }.onFailure {
+                    runCatching { context.startActivity(Intent(Settings.ACTION_SETTINGS)) }
+                }
+            },
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            Text("Set J.A.R.V.I.S. as Home screen")
         }
     }
 

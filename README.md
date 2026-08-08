@@ -24,6 +24,7 @@ never obstructed and stays fully swipeable while the animation plays.
 | Spoken J.A.R.V.I.S. voice | `audio/JarvisVoice` — built-in Text-to-Speech, UK English, no audio files needed |
 | Boot trigger | `boot/BootCompletedReceiver` → `service/JarvisOverlayService` |
 | Unlock trigger | dynamic `ACTION_USER_PRESENT` receiver in the service |
+| J.A.R.V.I.S. launcher / Home screen | `ui/home/HomeActivity` + `JarvisHomeScreen` — persistent HUD, live clock, real battery, app list, voice |
 | Niagara-safe layout | center-right anchor + `FLAG_NOT_TOUCHABLE` overlay |
 | Dark base + neon highlights | `ui/theme/*` (dark-only Material 3 scheme) |
 | Manifest permissions | `RECEIVE_BOOT_COMPLETED`, `SYSTEM_ALERT_WINDOW`, `FOREGROUND_SERVICE(_SPECIAL_USE)` |
@@ -126,6 +127,21 @@ Requires JDK 17 and the Android SDK (compileSdk 34).
 3. Toggle **Play on device boot** and/or **Play on unlock**.
 4. Tap **Run boot sequence now** for an in-app preview (no permission needed),
    or **Trigger as system overlay** to test the real overlay path.
+
+### Use it as your home screen (the full J.A.R.V.I.S. UI)
+
+Beyond the boot overlay, the app ships a **launcher**: set it as your Home app and
+your entire home screen becomes a persistent J.A.R.V.I.S. HUD — live clock, real
+battery telemetry, an arc reactor (tap it for a spoken status report), and your
+full app list. It greets you by voice on each launch.
+
+1. In the app, tap **"Set J.A.R.V.I.S. as Home screen"** (or Settings → Apps →
+   Default apps → Home app).
+2. Choose **J.A.R.V.I.S. OS**.
+3. Press Home — you're now on the HUD. Tap any app to launch it; tap the reactor
+   for a status report; tap **J.A.R.V.I.S. SETTINGS** to return to this panel.
+
+To go back to your normal launcher, just pick it again under Default apps → Home.
 
 ### Voice & sound
 
