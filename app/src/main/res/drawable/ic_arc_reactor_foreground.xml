@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Adaptive-icon foreground: a stylised Arc Reactor. Drawn on a 108dp canvas
+     with the inner 72dp keyline kept clear of the safe zone. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Outer ring -->
+    <path
+        android:strokeColor="#00E5FF"
+        android:strokeWidth="2.5"
+        android:fillColor="#00000000"
+        android:pathData="M54,26 A28,28 0 1,1 53.99,26 Z" />
+
+    <!-- Mid ring -->
+    <path
+        android:strokeColor="#4DD0FF"
+        android:strokeWidth="1.5"
+        android:fillColor="#00000000"
+        android:pathData="M54,34 A20,20 0 1,1 53.99,34 Z" />
+
+    <!-- Triangular reactor core -->
+    <path
+        android:fillColor="#00E5FF"
+        android:pathData="M54,42 L64,60 L44,60 Z" />
+    <path
+        android:fillColor="#B3F5FF"
+        android:pathData="M54,49 L59,58 L49,58 Z" />
+
+    <!-- Spokes -->
+    <group>
+        <path android:strokeColor="#1E88E5" android:strokeWidth="1.5" android:pathData="M54,34 L54,26" />
+        <path android:strokeColor="#1E88E5" android:strokeWidth="1.5" android:pathData="M74,54 L82,54" />
+        <path android:strokeColor="#1E88E5" android:strokeWidth="1.5" android:pathData="M34,54 L26,54" />
+        <path android:strokeColor="#1E88E5" android:strokeWidth="1.5" android:pathData="M54,74 L54,82" />
+    </group>
+</vector>

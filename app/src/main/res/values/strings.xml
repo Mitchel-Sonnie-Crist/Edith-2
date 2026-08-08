@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">J.A.R.V.I.S. OS</string>
+
+    <!-- Foreground-service notification -->
+    <string name="notif_channel_name">J.A.R.V.I.S. Boot Sequence</string>
+    <string name="notif_channel_desc">Runs briefly while the HUD boot animation plays.</string>
+    <string name="notif_title">J.A.R.V.I.S. online</string>
+    <string name="notif_text">Initializing heads-up display…</string>
+
+    <!-- Control panel -->
+    <string name="cta_grant_overlay">Grant display-over-apps permission</string>
+    <string name="cta_preview">Run boot sequence now</string>
+    <string name="cta_overlay_granted">Overlay permission granted</string>
+    <string name="switch_boot">Play on device boot</string>
+    <string name="switch_unlock">Play on unlock</string>
+
+    <!-- HUD telemetry lines -->
+    <string name="telemetry_1">INITIALIZING J.A.R.V.I.S. OS…</string>
+    <string name="telemetry_2">CALIBRATING CORE…</string>
+    <string name="telemetry_3">ROUTING ARC REACTOR POWER…</string>
+    <string name="telemetry_4">SYNCING BIOMETRICS…</string>
+    <string name="telemetry_5">SYSTEMS ONLINE</string>
+</resources>
