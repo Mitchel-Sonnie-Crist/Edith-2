@@ -70,6 +70,8 @@ class SoundManager(private val context: Context) {
             HudSound.RING_CHIME to "jarvis_ring_chime",
             HudSound.TELEMETRY_BEEP to "jarvis_beep",
             HudSound.ONLINE to "jarvis_online",
+            HudSound.DIAG_CLICK to "jarvis_click",
+            HudSound.SPARK to "jarvis_spark",
         ).forEach { (cue, name) ->
             val resId = rawResId(name)
             if (resId != 0) {
@@ -93,7 +95,18 @@ class SoundManager(private val context: Context) {
     private fun playSfx(cue: HudSound) {
         val id = sampleIds[cue] ?: return
         if (loaded[id] == true) {
-            soundPool.play(id, VOLUME, VOLUME, /* priority = */ 1, /* loop = */ 0, /* rate = */ 1f)
+            // Per-cue mix + a touch of pitch jitter so layered clicks/sparks never
+            // sound like the same sample retriggering — richer, more "alive".
+            val vol = when (cue) {
+                HudSound.DIAG_CLICK -> 0.35f
+                HudSound.SPARK -> 0.5f
+                else -> VOLUME
+            }
+            val rate = when (cue) {
+                HudSound.DIAG_CLICK, HudSound.SPARK -> 0.9f + Math.random().toFloat() * 0.3f
+                else -> 1f
+            }
+            soundPool.play(id, vol, vol, /* priority = */ 1, /* loop = */ 0, rate)
         } else {
             // Decode may still be in flight for the very first cue; skip rather
             // than block. (Assets are tiny, so this is rare in practice.)

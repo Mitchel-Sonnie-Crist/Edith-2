@@ -17,4 +17,10 @@ enum class HudSound {
 
     /** Confirmation tone on "SYSTEMS ONLINE". */
     ONLINE,
+
+    /** Soft system-diagnostic click, layered under continuous HUD activity. */
+    DIAG_CLICK,
+
+    /** Sharp glitch/spark tick, fired on random HUD spark flashes. */
+    SPARK,
 }
